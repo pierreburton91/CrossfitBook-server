@@ -10,7 +10,7 @@ const MemoryStore = require('memorystore')(session);
 const app = express();
 
 const configDB = require('./config/database.js');
-mongoose.connect(configDB.url, { useMongoClient: true });
+mongoose.connect(configDB.url, { useNewUrlParser: true });
 
 // require('./config/passport')(passport);
 

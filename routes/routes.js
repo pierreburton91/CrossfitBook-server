@@ -3,6 +3,9 @@ module.exports = function (app) {
     const records = require('../controllers/records-controller.js');
     const benchmarks = require('../controllers/benchmarks-controller.js');
 
+    app.route('/')
+        .get((req, res) => res.send('CrossfitBook server'))
+    
     app.route('/auth')
         .get(auth.connect)
         .put(auth.update)
