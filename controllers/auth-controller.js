@@ -1,9 +1,11 @@
 const User = require('../models/user-model');
+const Records = require('../models/records-model');
+const Benchmarks = require('../models/benchmarks-model');
 const fbConnect = require('../config/facebook-passport');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const querystring = require('querystring');
-const mongoose = require('mongoose');
+const createDocs = require('../functions/create-docs');
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -49,6 +51,7 @@ exports.connect = passport.authenticate('facebook')
 exports.update = async function (req, res) {
     User.findOne({ fbId: req.body.fbId }, (err, user) => {
         if (err) {
+            console.log(err);
             res.status(500).end();
         }
 
@@ -64,18 +67,33 @@ exports.update = async function (req, res) {
             res.status(200).end();
         })
     });
+
+        // Update weights
 }
 
 exports.delete = function (req, res) {
     User.deleteOne({ fbId: req.body.fbId }, (err) => {
         if (err) {
+            console.log(err);
             res.status(500).end();
         }
-
-        res.status(200).end();
     });
 
-    // Delete other records and benchmarks also !
+    Records.deleteOne({ relatedUserId: req.body._id }, (err) => {
+        if (err) {
+            console.log(err);
+            res.status(500).end();
+        }
+    });
+
+    Benchmarks.deleteOne({ relatedUserId: req.body._id }, (err) => {
+        if (err) {
+            console.log(err);
+            res.status(500).end();
+        }
+    });
+
+    res.status(200).end();
 }
 
 exports.callback = passport.authenticate('facebook');
@@ -93,5 +111,13 @@ exports.callbackRedirect = function (req, res) {
         fbId: user.fbId,
         createdDate: user.createdDate.toString()
     };
+
+    try {
+        createDocs.setNewUserRecordsObj(obj._id, Records);
+        createDocs.setNewUserBenchmarksObj(obj._id, Benchmarks);
+    } catch (err) {
+        console.log(err);
+    }
+
     res.redirect('/success?' + querystring.stringify(obj));
 }

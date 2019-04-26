@@ -1,19 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const BenchmarkItem = require('./record-item-model');
+const BenchmarkSchema = BenchmarkItem.schema;
 
 const BenchmarksSchema = new Schema({
     relatedUserId: String,
-    benchmarks: [{
-        title: String,
-        wod: String,
-        valuesTypesKey: Number,
-        history: [{
-            value: String,
-            date: String, 
-            isScaled: Boolean,
-            scaleText: String
-        }]
-    }]
+    benchmarks: [BenchmarkSchema]
 })
 
 module.exports = mongoose.model('Benchmarks', BenchmarksSchema);
