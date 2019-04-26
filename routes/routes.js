@@ -4,12 +4,24 @@ module.exports = function (app) {
     const benchmarks = require('../controllers/benchmarks-controller.js');
 
     app.route('/')
-        .get((req, res) => res.send('CrossfitBook server'))
+        .get((req, res) => { 
+            res.send('CrossfitBook server<br><br><a href="/auth">Connect</a>');
+        })
+    
+        app.get('/success', (req, res) => {
+            res.send('Success! Welcome ' + req.query.firstName + '!');
+        })
+        app.get('/fail', (req, res) => {
+            res.send('Fail')
+        })
     
     app.route('/auth')
         .get(auth.connect)
         .put(auth.update)
         .delete(auth.delete);
+
+    app.route('/auth/callback')
+        .get(auth.callback, auth.callbackRedirect);
 
     app.route('/records')
         .get(records.getAll)

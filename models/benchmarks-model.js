@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const BenchmarksSchema = new Schema({
-    relatedUserId: ObjectId,
+    relatedUserId: String,
     benchmarks: [{
         title: String,
         wod: String,

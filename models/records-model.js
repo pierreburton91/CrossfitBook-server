@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const ObjectId = mongoose.Schema.Types.ObjectId;
 
 const RecordsSchema = new Schema({
-    relatedUserId: ObjectId,
+    relatedUserId: String,
     records: [{
         title: String,
         text: String,
