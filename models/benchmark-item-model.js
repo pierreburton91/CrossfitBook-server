@@ -5,6 +5,7 @@ const BenchmarkItemSchema = new Schema({
     title: String,
     wod: String,
     valuesTypesKey: Number,
+    unit: String,
     history: [{
         value: String,
         date: String, 

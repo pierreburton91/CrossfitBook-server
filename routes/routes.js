@@ -28,7 +28,7 @@ module.exports = function (app) {
         .post(records.addNew)
         .delete(records.delete);
 
-    app.route('/records/:recordTitle/:recordText')
+    app.route('/records/deep')
         .post(records.addNewDeep)
         .put(records.updateDeep)
         .delete(records.deleteDeep);
@@ -38,7 +38,7 @@ module.exports = function (app) {
         .post(benchmarks.addNew)
         .delete(benchmarks.delete);
 
-    app.route('/benchmarks/:benchmarkTitle')
+    app.route('/benchmarks/deep')
         .post(benchmarks.addNewDeep)
         .put(benchmarks.updateDeep)
         .delete(benchmarks.deleteDeep);

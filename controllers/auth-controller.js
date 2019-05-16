@@ -6,6 +6,7 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const querystring = require('querystring');
 const createDocs = require('../functions/create-docs');
+const converWeights = require('../functions/convert-weights');
 
 passport.serializeUser(function (user, done) {
     done(null, user);
@@ -62,13 +63,80 @@ exports.update = async function (req, res) {
         user[req.body.toUpdate] = req.body.value;
         user.save(function (err) {
             if (err) {
+                console.log(err);
                 res.status(500).end();
             }
-            res.status(200).end();
         })
     });
 
-        // Update weights
+    if (req.body.toUpdate === 'weightUnit') {
+        Records.findOne({ relatedUserId: req.body._id }, (err, doc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            if (!doc) {
+                return;
+            }
+
+            for (let record of doc.records) {
+                
+                if (record.unit != "Kg" && record.unit != "Lbs") {
+                    return;
+                }  else if (record.unit == "Kg" && req.body.value == 0) {
+                    return;
+                } else if (record.unit == "Lbs" && req.body.value == 1) {
+                    return;
+                } else {
+                    record.unit = req.body.value == 0 ? 'Kg' : 'Lbs';
+                    record.history.forEach(item => {
+                        item.value = req.body.value == 0 ? converWeights.convertLbsToKg(item.value) : converWeights.convertKgtoLbs(item.value);
+                    });
+                }
+            }
+
+            doc.save(function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            })
+        });
+
+        Benchmarks.findOne({ relatedUserId: req.body._id }, (err, doc) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            if (!doc) {
+                return;
+            }
+
+            for (let benchmark of doc.benchmarks) {
+                if (benchmark.unit != "Kg" && benchmark.unit != "Lbs") {
+                    return;
+                } else if (benchmark.unit == "Kg" && req.body.value == 0) {
+                    return;
+                } else if (benchmark.unit == "Lbs" && req.body.value == 1) {
+                    return;
+                } else {
+                    benchmark.unit = req.body.value == 0 ? 'Kg' : 'Lbs';
+                    benchmark.history.forEach(item => {
+                        item.value = req.body.value == 0 ? converWeights.convertLbsToKg(item.value) : converWeights.convertKgtoLbs(item.value);
+                    });
+                }
+            }
+
+            doc.save(function (err) {
+                if (err) {
+                    console.log(err);
+                }
+            })
+        })
+    }
+
+    res.status(200).end();
 }
 
 exports.delete = function (req, res) {

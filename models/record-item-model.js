@@ -5,6 +5,7 @@ const RecordItemSchema = new Schema({
         title: String,
         text: String,
         valueTypesKey: Number,
+        unit: String,
         history: [{
             value: String,
             date: String
